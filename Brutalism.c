@@ -11,10 +11,22 @@ static void UpdateDrawFrame(void);
 
 int main() 
 {
+    //
+    // Variables
+    //
+
     const int screenWidth = 1024;
     const int screenHeight = 720;
 
+
+    //
+    // Inits
+    //
+
     InitWindow(screenWidth, screenHeight, "Brutalism");
+    InitAudioDevice();
+
+    const Music music = LoadMusicStream("resources/SeaShanty2.mp3"); // must be called after INITAUDIODEVICE()
 
     camera.position = (Vector3){ 10.0f, 10.0f, 8.0f };
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
@@ -22,17 +34,17 @@ int main()
     camera.fovy = 60.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
-#if defined(PLATFORM_WEB)
-    emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
-#else
-    SetTargetFPS(60);               
+    SetTargetFPS(0);     
+    PlayMusicStream(music);          
 
     while (!WindowShouldClose())    
     {
+        UpdateMusicStream(music);
+        SetMusicVolume(music, 1);
         UpdateDrawFrame();
     }
-#endif
 
+    StopMusicStream(music);
     CloseWindow();     
     return 0;
 }
